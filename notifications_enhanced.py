@@ -1,19 +1,27 @@
 """
 مدير الإشعارات المحسن والمتقدم
 """
-from pywebpush import webpush, WebPushException
 import json
 import base64
-from py_vapid import Vapid
 from datetime import datetime, timedelta
-from models import db, Notification, User, Settings, user_notifications
 import logging
 import os
 from urllib.parse import urlparse
 
+from py_vapid import Vapid
+from models import db, Notification, User, Settings, user_notifications
+
 # إعداد السجل
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("notifications_enhanced")
+
+# محاولة استيراد مكتبة pywebpush بشكل اختياري
+try:
+    from pywebpush import webpush, WebPushException
+    PYWEBPUSH_AVAILABLE = True
+except Exception:
+    PYWEBPUSH_AVAILABLE = False
+
 
 class EnhancedNotificationManager:
     """مدير الإشعارات المحسن مع مميزات متقدمة"""
@@ -197,6 +205,11 @@ class EnhancedNotificationManager:
     @staticmethod
     def send_push_to_user(user_id, notification_data):
         """إرسال إشعار Push لمستخدم محدد"""
+        # إذا لم تكن مكتبة pywebpush متاحة، لا نحاول الإرسال حتى لا يتوقف التطبيق
+        if not PYWEBPUSH_AVAILABLE:
+            logger.error("مكتبة pywebpush غير متاحة، لن يتم إرسال إشعارات Push في هذه البيئة")
+            return False
+
         try:
             user = User.query.get(user_id)
             if not user or not user.push_subscription or not user.notifications_enabled:
