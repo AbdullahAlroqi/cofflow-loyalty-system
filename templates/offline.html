@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>غير متصل - COFFLOW</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #8B4513 0%, #514f4b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            max-width: 500px;
+        }
+        
+        .icon {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+        
+        .retry-btn {
+            background: white;
+            color: #8B4513;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .features {
+            margin-top: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .features h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .features ul {
+            list-style: none;
+            text-align: right;
+        }
+        
+        .features li {
+            padding: 10px 0;
+            font-size: 1rem;
+        }
+        
+        .features li i {
+            margin-left: 10px;
+            color: #D2691E;
+        }
+        
+        @media (max-width: 768px) {
+            .icon {
+                font-size: 80px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-container">
+        <div class="icon">📵</div>
+        <h1>لا يوجد اتصال بالإنترنت</h1>
+        <p>
+            يبدو أنك غير متصل بالإنترنت حالياً.<br>
+            يرجى التحقق من اتصالك والمحاولة مرة أخرى.
+        </p>
+        <button class="retry-btn" onclick="window.location.reload()">
+            <i>🔄</i> إعادة المحاولة
+        </button>
+        
+        <div class="features">
+            <h2>💡 نصيحة: ميزات التطبيق</h2>
+            <ul>
+                <li><i>✅</i> يعمل التطبيق بشكل كامل دون اتصال بالإنترنت</li>
+                <li><i>📱</i> يمكن تثبيته على شاشتك الرئيسية</li>
+                <li><i>⚡</i> سريع وسلس في الاستخدام</li>
+                <li><i>🔄</i> يتم مزامنة البيانات تلقائياً عند الاتصال</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

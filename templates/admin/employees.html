@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة الموظفين - COFFLOW{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="fas fa-users"></i> إدارة الموظفين
+    </h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+        <i class="fas fa-user-plus"></i> إضافة موظف جديد
+    </button>
+</div>
+
+<!-- قائمة الموظفين -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>الاسم</th>
+                        <th>رقم الجوال</th>
+                        <th>البريد الإلكتروني</th>
+                        <th>تاريخ الانضمام</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <i class="fas fa-user-tie"></i>
+                            {{ employee.name }}
+                        </td>
+                        <td>{{ employee.phone }}</td>
+                        <td>{{ employee.email or '-' }}</td>
+                        <td class="text-muted small">
+                            {{ employee.created_at.strftime('%Y-%m-%d') }}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('admin_edit_employee', id=employee.id) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> تعديل
+                            </a>
+                            <form method="POST" action="{{ url_for('admin_delete_employee', id=employee.id) }}" 
+                                  style="display: inline;" 
+                                  onsubmit="return confirm('هل أنت متأكد من حذف هذا الموظف؟');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i> حذف
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="fas fa-users-slash"></i> لا يوجد موظفين بعد
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal إضافة موظف -->
+<div class="modal fade" id="addEmployeeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); color: white;">
+                <h5 class="modal-title">
+                    <i class="fas fa-user-plus"></i> إضافة موظف جديد
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('admin_employees') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">الاسم الكامل</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">رقم الجوال</label>
+                        <input type="text" class="form-control" id="phone" name="phone" 
+                               placeholder="05xxxxxxxx" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">البريد الإلكتروني (اختياري)</label>
+                        <input type="email" class="form-control" id="email" name="email">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">كلمة المرور</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> حفظ
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

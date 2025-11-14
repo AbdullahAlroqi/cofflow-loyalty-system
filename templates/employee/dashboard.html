@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.employee_dashboard }} - COFFLOW{% endblock %}
+
+{% block content %}
+<!-- أزرار تغيير اللغة -->
+<div class="d-flex justify-content-end mb-3">
+    <div class="btn-group" role="group">
+        <a href="{{ url_for('change_language', lang='ar') }}" class="btn btn-sm {% if lang == 'ar' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇸🇦 عربي
+        </a>
+        <a href="{{ url_for('change_language', lang='en') }}" class="btn btn-sm {% if lang == 'en' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇬🇧 English
+        </a>
+        <a href="{{ url_for('change_language', lang='bn') }}" class="btn btn-sm {% if lang == 'bn' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇧🇩 বাংলা
+        </a>
+    </div>
+</div>
+
+<div class="text-center mb-5">
+    <h2 class="mb-3">
+        <i class="fas fa-user-tie"></i> {{ t.welcome }} {{ current_user.name }}
+    </h2>
+    <p class="lead text-muted">{{ t.quick_actions }}</p>
+</div>
+
+<!-- إحصائيات سريعة -->
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="stat-card">
+            <i class="fas fa-tasks"></i>
+            <h3>{{ today_transactions }}</h3>
+            <p>{{ t.today_operations }}</p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="stat-card">
+            <i class="fas fa-clock"></i>
+            <h3>{{ current_user.created_at.strftime('%Y-%m-%d') }}</h3>
+            <p>{{ t.created_at }}</p>
+        </div>
+    </div>
+</div>
+
+<!-- الإجراءات السريعة -->
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card text-center h-100">
+            <div class="card-body p-5">
+                <i class="fas fa-search fa-4x mb-4" style="color: var(--primary-color);"></i>
+                <h4 class="mb-3">{{ t.search_customer }}</h4>
+                <p class="text-muted mb-4">{{ t.search_placeholder }}</p>
+                <a href="{{ url_for('employee_search') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-search"></i> {{ t.search_button }}
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-center h-100">
+            <div class="card-body p-5">
+                <i class="fas fa-ticket-alt fa-4x mb-4" style="color: var(--secondary-color);"></i>
+                <h4 class="mb-3">{{ t.verify_coupon }}</h4>
+                <p class="text-muted mb-4">{{ t.verify_coupon_title }}</p>
+                <a href="{{ url_for('employee_verify_coupon') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-check-circle"></i> {{ t.verify_button }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

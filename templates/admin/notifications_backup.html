@@ -1,0 +1,401 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة الإشعارات - {{ super() }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .notification-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-brown) 100%);
+        padding: 25px 0;
+        margin-bottom: 30px;
+        border-radius: 10px;
+        color: white;
+    }
+    
+    .notification-card {
+        border: none;
+        border-radius: 15px;
+        transition: all 0.3s ease;
+        margin-bottom: 25px;
+    }
+    
+    .notification-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .notification-type {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .notification-type-promotion {
+        background-color: #E8F5E9;
+        color: #2E8B57;
+    }
+    
+    .notification-type-alert {
+        background-color: #FFEBEE;
+        color: #D32F2F;
+    }
+    
+    .notification-type-news {
+        background-color: #E3F2FD;
+        color: #1976D2;
+    }
+    
+    .notification-type-custom {
+        background-color: #FFF8E1;
+        color: #FFA000;
+    }
+    
+    .notification-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+    
+    .notification-date {
+        font-size: 0.85rem;
+        color: #777;
+        margin-bottom: 15px;
+    }
+    
+    .notification-content {
+        margin-bottom: 20px;
+    }
+    
+    .notification-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .notification-icon-promotion {
+        background-color: #E8F5E9;
+        color: #2E8B57;
+    }
+    
+    .notification-icon-alert {
+        background-color: #FFEBEE;
+        color: #D32F2F;
+    }
+    
+    .notification-icon-news {
+        background-color: #E3F2FD;
+        color: #1976D2;
+    }
+    
+    .notification-icon-custom {
+        background-color: #FFF8E1;
+        color: #FFA000;
+    }
+    
+    .notification-status {
+        position: absolute;
+        bottom: 15px;
+        left: 15px;
+        font-size: 0.85rem;
+    }
+    
+    .notification-recipients {
+        margin-bottom: 15px;
+    }
+    
+    .notification-recipients .badge {
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 5px 10px;
+    }
+    
+    .form-label {
+        font-weight: 600;
+    }
+    
+    .img-preview {
+        max-width: 100%;
+        max-height: 200px;
+        border-radius: 8px;
+        margin-top: 10px;
+    }
+    
+    .stats-card {
+        border-radius: 15px;
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        transition: all 0.3s;
+    }
+    
+    .stats-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .stats-icon {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .stats-number {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .stats-label {
+        color: #777;
+        font-size: 1rem;
+    }
+    
+    .stats-promotion {
+        background-color: #E8F5E9;
+        color: #2E8B57;
+    }
+    
+    .stats-alert {
+        background-color: #FFEBEE;
+        color: #D32F2F;
+    }
+    
+    .stats-total {
+        background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-brown) 100%);
+        color: white;
+    }
+    
+    .stats-read {
+        background-color: #E3F2FD;
+        color: #1976D2;
+    }
+    
+    @media (max-width: 768px) {
+        .notification-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .stats-number {
+            font-size: 1.5rem;
+        }
+        
+        .stats-icon {
+            font-size: 2rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- رأس الصفحة -->
+    <div class="notification-header text-center">
+        <h2><i class="fas fa-bell"></i> إدارة الإشعارات والتنبيهات</h2>
+        <p class="mb-0">إرسال وإدارة الإشعارات والتنبيهات للعملاء</p>
+    </div>
+    
+    <div class="row">
+        <!-- الإحصائيات -->
+        <div class="col-12 mb-4">
+            <div class="row">
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card stats-total">
+                        <div class="stats-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stats-number" id="stats-total">0</div>
+                        <div class="stats-label">إجمالي الإشعارات</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card stats-read">
+                        <div class="stats-icon">
+                            <i class="fas fa-envelope-open"></i>
+                        </div>
+                        <div class="stats-number" id="stats-read">0</div>
+                        <div class="stats-label">الإشعارات المقروءة</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card stats-promotion">
+                        <div class="stats-icon">
+                            <i class="fas fa-tag"></i>
+                        </div>
+                        <div class="stats-number" id="stats-promotion">0</div>
+                        <div class="stats-label">العروض</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6">
+                    <div class="stats-card stats-alert">
+                        <div class="stats-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stats-number" id="stats-alert">0</div>
+                        <div class="stats-label">التنبيهات</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- إنشاء إشعار جديد وقائمة الإشعارات -->
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-plus-circle"></i> إشعار جديد</h5>
+                </div>
+                <div class="card-body">
+                    <form id="new-notification-form">
+                        <div class="mb-3">
+                            <label for="notification-title" class="form-label">عنوان الإشعار</label>
+                            <input type="text" class="form-control" id="notification-title" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notification-body" class="form-label">محتوى الإشعار</label>
+                            <textarea class="form-control" id="notification-body" rows="4" required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notification-type" class="form-label">نوع الإشعار</label>
+                            <select class="form-select" id="notification-type" required>
+                                <option value="promotion">عرض أو تخفيض</option>
+                                <option value="alert">تنبيه هام</option>
+                                <option value="news">أخبار وتحديثات</option>
+                                <option value="custom">مخصص</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notification-icon" class="form-label">أيقونة الإشعار</label>
+                            <select class="form-select" id="notification-icon">
+                                <option value="bell">جرس</option>
+                                <option value="tag">علامة سعر</option>
+                                <option value="gift">هدية</option>
+                                <option value="coffee">قهوة</option>
+                                <option value="info-circle">معلومة</option>
+                                <option value="exclamation-circle">تنبيه</option>
+                                <option value="star">نجمة</option>
+                                <option value="thumbs-up">إعجاب</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notification-image" class="form-label">صورة الإشعار (اختياري)</label>
+                            <input type="file" class="form-control" id="notification-image" accept="image/*">
+                            <div id="image-preview-container" class="mt-2 d-none">
+                                <img src="" id="image-preview" class="img-preview">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notification-action" class="form-label">رابط العمل (اختياري)</label>
+                            <input type="url" class="form-control" id="notification-action" placeholder="https://...">
+                            <small class="text-muted">سيتم توجيه المستخدم لهذا الرابط عند النقر على الإشعار</small>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label d-block">خيارات الإرسال</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="notification-scope" id="scope-all" value="all" checked>
+                                <label class="form-check-label" for="scope-all">لجميع العملاء</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="notification-scope" id="scope-specific" value="specific">
+                                <label class="form-check-label" for="scope-specific">لعملاء محددين</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 d-none" id="customers-selector-container">
+                            <label for="customers-selector" class="form-label">اختر العملاء</label>
+                            <select class="form-select" id="customers-selector" multiple>
+                                <!-- سيتم ملؤها من JavaScript -->
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label d-block">توقيت الإرسال</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="notification-schedule" id="schedule-now" value="now" checked>
+                                <label class="form-check-label" for="schedule-now">الآن</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="notification-schedule" id="schedule-later" value="later">
+                                <label class="form-check-label" for="schedule-later">جدولة للإرسال لاحقًا</label>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3 d-none" id="schedule-datetime-container">
+                            <label for="schedule-datetime" class="form-label">وقت الإرسال</label>
+                            <input type="datetime-local" class="form-control" id="schedule-datetime">
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="notification-expiry" class="form-label">تاريخ انتهاء الصلاحية (اختياري)</label>
+                            <input type="datetime-local" class="form-control" id="notification-expiry">
+                            <small class="text-muted">سيتم إخفاء الإشعار تلقائيًا بعد هذا التاريخ</small>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> إرسال الإشعار</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- قائمة الإشعارات -->
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="fas fa-list"></i> قائمة الإشعارات</h5>
+                    <div>
+                        <button class="btn btn-sm btn-light" id="refresh-notifications">
+                            <i class="fas fa-sync-alt"></i> تحديث
+                        </button>
+                        <div class="btn-group ms-2">
+                            <button class="btn btn-sm btn-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-filter"></i> تصفية
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item filter-option" data-filter="all" href="#">الكل</a></li>
+                                <li><a class="dropdown-item filter-option" data-filter="promotion" href="#">العروض</a></li>
+                                <li><a class="dropdown-item filter-option" data-filter="alert" href="#">التنبيهات</a></li>
+                                <li><a class="dropdown-item filter-option" data-filter="news" href="#">الأخبار</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush" id="notifications-list">
+                        <!-- سيتم ملؤها من JavaScript -->
+                        <div class="text-center p-5" id="loading-indicator">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">جاري التحميل...</span>
+                            </div>
+                            <p class="mt-2">جاري تحميل الإشعارات...</p>
+                        </div>
+                    </div>
+                    
+                    <!-- رسالة عند عدم وجود إشعارات -->
+                    <div class="text-center p-5 d-none" id="no-notifications">
+                        <i class="fas fa-bell-slash fa-3x text-muted mb-3"></i>
+                        <h5>لا توجد إشعارات</h5>
+                        <p class="text-muted">قم بإنشاء إشعار جديد للبدء</p>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <nav>
+                        <ul class="pagination justify-content-center mb-0" id="pagination">
+                            <!-- سيتم إنشاؤها ديناميكياً -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>

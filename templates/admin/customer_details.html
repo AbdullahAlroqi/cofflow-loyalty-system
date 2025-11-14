@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}تفاصيل العميل - COFFLOW{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin_customers') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-right"></i> العودة للقائمة
+    </a>
+</div>
+
+<div class="row g-4">
+    <!-- معلومات العميل -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="fas fa-user"></i> معلومات العميل</h5>
+                <a href="{{ url_for('admin_edit_customer', id=customer.id) }}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-edit"></i> تعديل
+                </a>
+            </div>
+            <div class="card-body">
+                <p><strong>الاسم:</strong> {{ customer.name }}</p>
+                <p><strong>رقم الجوال:</strong> {{ customer.phone }}</p>
+                <p><strong>البريد:</strong> {{ customer.email or '-' }}</p>
+                <p><strong>تاريخ التسجيل:</strong><br>
+                    <small class="text-muted">{{ customer.created_at.strftime('%Y-%m-%d %H:%M')  if {{ customer.created_at else "-"  if customer.created_at else "-" }}}}</small>
+                </p>
+                <hr>
+                <form method="POST" action="{{ url_for('admin_edit_customer', id=customer.id) }}">
+                    <label class="form-label">
+                        <strong>عدد الأكواب الحالي:</strong>
+                    </label>
+                    <div class="input-group mb-3">
+                        <input type="number" class="form-control" name="cups_count" 
+                               value="{{ customer.cups_count }}" min="0">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> حفظ
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- الأكواد -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-ticket-alt"></i> الأكواد</h5>
+            </div>
+            <div class="card-body">
+                {% if coupons %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>الكود</th>
+                                <th>الحالة</th>
+                                <th>تاريخ الإنشاء</th>
+                                <th>تاريخ الاستخدام</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for coupon in coupons %}
+                            <tr>
+                                <td><code>{{ coupon.code }}</code></td>
+                                <td>
+                                    {% if coupon.status == 'active' %}
+                                        <span class="badge bg-success">نشط</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">مستخدم</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small text-muted">
+                                    {% if coupon.created_at %}{{ coupon.created_at.strftime('%Y-%m-%d %H:%M') }}{% else %}-{% endif %}
+                                </td>
+                                <td class="small text-muted">
+                                    {% if coupon.used_at %}{{ coupon.used_at.strftime('%Y-%m-%d %H:%M') }}{% else %}-{% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">
+                    <i class="fas fa-inbox"></i> لا توجد أكواد بعد
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- سجل العمليات -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-history"></i> سجل العمليات</h5>
+            </div>
+            <div class="card-body">
+                {% if transactions %}
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>النوع</th>
+                                <th>الموظف</th>
+                                <th>الوصف</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in transactions %}
+                            <tr>
+                                <td class="small text-muted">
+                                    {{ transaction.created_at.strftime('%Y-%m-%d %H:%M')  if {{ transaction.created_at else "-"  if transaction.created_at else "-" }}}}
+                                </td>
+                                <td>
+                                    {% if transaction.transaction_type == 'add_cup' %}
+                                        <span class="badge bg-success">إضافة كوب</span>
+                                    {% elif transaction.transaction_type == 'redeem_coupon' %}
+                                        <span class="badge bg-warning">صرف كوبون</span>
+                                    {% else %}
+                                        <span class="badge bg-info">تعديل</span>
+                                    {% endif %}
+                                </td>
+                                <td class="small">{{ transaction.employee.name }}</td>
+                                <td class="small text-muted">{{ transaction.description }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-center text-muted">
+                    <i class="fas fa-inbox"></i> لا توجد عمليات بعد
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

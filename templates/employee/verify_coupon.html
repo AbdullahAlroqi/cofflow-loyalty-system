@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.verify_coupon_title }} - COFFLOW{% endblock %}
+
+{% block content %}
+<!-- أزرار تغيير اللغة -->
+<div class="d-flex justify-content-end mb-3">
+    <div class="btn-group" role="group">
+        <a href="{{ url_for('change_language', lang='ar') }}" class="btn btn-sm {% if lang == 'ar' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇸🇦 عربي
+        </a>
+        <a href="{{ url_for('change_language', lang='en') }}" class="btn btn-sm {% if lang == 'en' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇬🇧 English
+        </a>
+        <a href="{{ url_for('change_language', lang='bn') }}" class="btn btn-sm {% if lang == 'bn' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇧🇩 বাংলা
+        </a>
+    </div>
+</div>
+
+<h2 class="mb-4 text-center">
+    <i class="fas fa-ticket-alt"></i> {{ t.verify_coupon_title }}
+</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <!-- نموذج إدخال الكود -->
+        <div class="card shadow-lg">
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('employee_verify_coupon') }}">
+                    <div class="mb-4">
+                        <label for="code" class="form-label fw-bold">
+                            <i class="fas fa-qrcode"></i> {{ t.enter_code }}
+                        </label>
+                        <input type="text" class="form-control form-control-lg text-center" 
+                               id="code" name="code" placeholder="{{ t.code_placeholder }}" 
+                               style="letter-spacing: 3px; font-weight: bold;"
+                               required autofocus>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-check-circle"></i> {{ t.verify_button }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- نتيجة التحقق -->
+        {% if message %}
+        <div class="card mt-4">
+            <div class="card-body text-center p-4">
+                {% if status == 'success' %}
+                    <i class="fas fa-check-circle fa-5x text-success mb-3"></i>
+                    <h3 class="text-success mb-3">{{ t.success }}!</h3>
+                    <p class="lead">{{ message }}</p>
+                    {% if coupon %}
+                    <hr>
+                    <div class="text-start">
+                        <p><strong>العميل:</strong> {{ coupon.customer.name }}</p>
+                        <p><strong>رقم الجوال:</strong> {{ coupon.customer.phone }}</p>
+                        <p><strong>الكود:</strong> <code>{{ coupon.code }}</code></p>
+                    </div>
+                    {% endif %}
+                {% else %}
+                    <i class="fas fa-times-circle fa-5x text-danger mb-3"></i>
+                    <h3 class="text-danger mb-3">{{ t.error }}!</h3>
+                    <p class="lead">{{ message }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- تعليمات -->
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-info-circle"></i> تعليمات الاستخدام
+                </h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li class="mb-2">اطلب من العميل إظهار كود الكوبون من حسابه</li>
+                    <li class="mb-2">أدخل الكود في الحقل أعلاه</li>
+                    <li class="mb-2">اضغط على "التحقق من الكود"</li>
+                    <li class="mb-2">إذا كان الكود صحيحاً، سيتم قبوله وإلغاؤه تلقائياً</li>
+                    <li class="mb-2">إذا كان مستخدماً مسبقاً، سيظهر رسالة رفض</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

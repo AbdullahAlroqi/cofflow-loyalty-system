@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}{{ t.search }} - COFFLOW{% endblock %}
+
+{% block content %}
+<!-- أزرار تغيير اللغة -->
+<div class="d-flex justify-content-end mb-3">
+    <div class="btn-group" role="group">
+        <a href="{{ url_for('change_language', lang='ar') }}" class="btn btn-sm {% if lang == 'ar' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇸🇦 عربي
+        </a>
+        <a href="{{ url_for('change_language', lang='en') }}" class="btn btn-sm {% if lang == 'en' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇬🇧 English
+        </a>
+        <a href="{{ url_for('change_language', lang='bn') }}" class="btn btn-sm {% if lang == 'bn' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇧🇩 বাংলা
+        </a>
+    </div>
+</div>
+<h2 class="mb-4">
+    <i class="fas fa-search"></i> {{ t.search }}
+</h2>
+
+<!-- نموذج البحث -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('employee_search') }}">
+            <div class="row g-3">
+                <div class="col-md-10">
+                    <input type="text" class="form-control form-control-lg" id="query" name="query" 
+                           placeholder="{{ t.search_placeholder }}" required autofocus>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-search"></i> {{ t.search_button }}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- نتائج البحث -->
+{% if search_query %}
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="fas fa-list"></i> نتائج البحث
+            {% if customers %}
+                <span class="badge bg-primary">{{ customers|length }}</span>
+            {% endif %}
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        {% if customers %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>{{ t.customer_name }}</th>
+                        <th>{{ t.phone }}</th>
+                        <th>{{ t.cups_count }}</th>
+                        <th>{{ t.actions }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for customer in customers %}
+                    <tr>
+                        <td>
+                            <i class="fas fa-user"></i>
+                            {{ customer.name }}
+                        </td>
+                        <td>{{ customer.phone }}</td>
+                        <td>
+                            <span class="badge bg-primary fs-6">
+                                {{ customer.cups_count }} <i class="fas fa-coffee"></i>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('employee_customer', id=customer.id) }}" 
+                               class="btn btn-sm btn-primary">
+                                <i class="fas fa-eye"></i> {{ t.view }}
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <p class="text-muted">لا توجد نتائج للبحث "{{ search_query }}"</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

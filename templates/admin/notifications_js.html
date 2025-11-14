@@ -1,0 +1,270 @@
+{% block extra_js %}
+<script>
+    // متغيرات عامة
+    let currentPage = 1;
+    let totalPages = 1;
+    let currentFilter = 'all';
+    let detailModal;
+    let confirmModal;
+    let selectedNotificationId = null;
+    let customersData = [];
+    
+    // عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        // تهيئة modals
+        detailModal = new bootstrap.Modal(document.getElementById('notificationDetailModal'));
+        confirmModal = new bootstrap.Modal(document.getElementById('confirmationModal'));
+        
+        // تحميل الإشعارات
+        loadNotifications(1);
+        
+        // تحميل العملاء للاختيار
+        loadCustomers();
+        
+        // مستمع نموذج الإشعار الجديد
+        document.getElementById('new-notification-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            createNotification();
+        });
+        
+        // مستمع زر التحديث
+        document.getElementById('refresh-notifications').addEventListener('click', function() {
+            loadNotifications(1);
+        });
+        
+        // مستمعات الفلاتر
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', function(e) {
+                e.preventDefault();
+                currentFilter = this.getAttribute('data-filter');
+                loadNotifications(1);
+            });
+        });
+        
+        // مستمع لمعاينة الصورة
+        document.getElementById('notification-image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('image-preview');
+                    preview.src = e.target.result;
+                    document.getElementById('image-preview-container').classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                document.getElementById('image-preview-container').classList.add('d-none');
+            }
+        });
+        
+        // مستمعات خيارات الإرسال
+        document.getElementById('scope-specific').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('customers-selector-container').classList.remove('d-none');
+            }
+        });
+        
+        document.getElementById('scope-all').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('customers-selector-container').classList.add('d-none');
+            }
+        });
+        
+        // مستمعات توقيت الإرسال
+        document.getElementById('schedule-later').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('schedule-datetime-container').classList.remove('d-none');
+            }
+        });
+        
+        document.getElementById('schedule-now').addEventListener('change', function() {
+            if (this.checked) {
+                document.getElementById('schedule-datetime-container').classList.add('d-none');
+            }
+        });
+        
+        // مستمع زر حذف الإشعار
+        document.getElementById('delete-notification-btn').addEventListener('click', function() {
+            if (selectedNotificationId) {
+                showConfirmation('هل أنت متأكد من أنك تريد حذف هذا الإشعار؟', function() {
+                    deleteNotification(selectedNotificationId);
+                });
+            }
+        });
+    });
+    
+    // تحميل الإشعارات
+    function loadNotifications(page) {
+        currentPage = page;
+        
+        // إظهار مؤشر التحميل
+        document.getElementById('loading-indicator').classList.remove('d-none');
+        document.getElementById('no-notifications').classList.add('d-none');
+        
+        // تحديث عدادات الإحصائيات
+        updateStatistics();
+        
+        // طلب الإشعارات من الخادم
+        fetch(`/api/admin/notifications?page=${page}&filter=${currentFilter}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('loading-indicator').classList.add('d-none');
+                
+                const notificationsList = document.getElementById('notifications-list');
+                // إزالة الإشعارات السابقة (باستثناء مؤشر التحميل)
+                Array.from(notificationsList.children).forEach(child => {
+                    if (child.id !== 'loading-indicator') {
+                        child.remove();
+                    }
+                });
+                
+                if (data.notifications && data.notifications.length > 0) {
+                    // إضافة الإشعارات إلى القائمة
+                    data.notifications.forEach(notification => {
+                        const notificationElement = createNotificationElement(notification);
+                        notificationsList.appendChild(notificationElement);
+                    });
+                    
+                    // تحديث الترقيم
+                    updatePagination(data.current_page, data.total_pages);
+                } else {
+                    document.getElementById('no-notifications').classList.remove('d-none');
+                    document.getElementById('pagination').innerHTML = '';
+                }
+            })
+            .catch(error => {
+                console.error('خطأ في تحميل الإشعارات:', error);
+                document.getElementById('loading-indicator').classList.add('d-none');
+                document.getElementById('no-notifications').classList.remove('d-none');
+            });
+    }
+    
+    // إنشاء عنصر الإشعار
+    function createNotificationElement(notification) {
+        const listItem = document.createElement('a');
+        listItem.className = 'list-group-item list-group-item-action';
+        listItem.setAttribute('data-id', notification.id);
+        
+        // تحديد الأيقونة بناءً على النوع
+        let icon = 'bell';
+        if (notification.icon) {
+            icon = notification.icon;
+        } else if (notification.type === 'promotion') {
+            icon = 'tag';
+        } else if (notification.type === 'alert') {
+            icon = 'exclamation-circle';
+        } else if (notification.type === 'news') {
+            icon = 'newspaper';
+        }
+        
+        // تحديد نص النوع
+        let typeText = 'إشعار';
+        let typeBadgeClass = 'bg-secondary';
+        
+        if (notification.type === 'promotion') {
+            typeText = 'عرض';
+            typeBadgeClass = 'bg-success';
+        } else if (notification.type === 'alert') {
+            typeText = 'تنبيه';
+            typeBadgeClass = 'bg-danger';
+        } else if (notification.type === 'news') {
+            typeText = 'أخبار';
+            typeBadgeClass = 'bg-info';
+        }
+        
+        // صياغة التاريخ
+        const createdAt = new Date(notification.created_at);
+        const formattedDate = createdAt.toLocaleString('ar-SA', { 
+            day: 'numeric', 
+            month: 'short', 
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+        
+        // المحتوى الداخلي
+        listItem.innerHTML = `
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <span class="notification-icon notification-icon-${notification.type}">
+                        <i class="fas fa-${icon}"></i>
+                    </span>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-1 notification-title">${notification.title}</h6>
+                        <span class="badge ${typeBadgeClass}">${typeText}</span>
+                    </div>
+                    <p class="mb-1 text-muted small notification-date">
+                        <i class="far fa-clock"></i> ${formattedDate}
+                    </p>
+                    <p class="mb-1 notification-content text-truncate">${notification.body}</p>
+                    <div class="notification-status">
+                        <small class="text-muted">
+                            ${notification.scheduled_at ? `<i class="far fa-calendar-alt"></i> مجدول: ${new Date(notification.scheduled_at).toLocaleString('ar-SA')}` : ''}
+                            ${notification.recipients && notification.recipients.length ? `<i class="fas fa-users"></i> ${notification.recipients.length} مستلم` : ''}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        // مستمع النقر لعرض التفاصيل
+        listItem.addEventListener('click', function() {
+            showNotificationDetails(notification.id);
+        });
+        
+        return listItem;
+    }
+    
+    // تحديث الترقيم
+    function updatePagination(currentPage, totalPages) {
+        const pagination = document.getElementById('pagination');
+        pagination.innerHTML = '';
+        
+        // إذا كان هناك صفحة واحدة فقط، لا داعي للترقيم
+        if (totalPages <= 1) {
+            return;
+        }
+        
+        // زر الصفحة السابقة
+        const prevLi = document.createElement('li');
+        prevLi.className = `page-item ${currentPage === 1 ? 'disabled' : ''}`;
+        prevLi.innerHTML = `<a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>`;
+        prevLi.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage > 1) {
+                loadNotifications(currentPage - 1);
+            }
+        });
+        pagination.appendChild(prevLi);
+        
+        // أرقام الصفحات
+        const startPage = Math.max(1, currentPage - 2);
+        const endPage = Math.min(totalPages, startPage + 4);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            const pageLi = document.createElement('li');
+            pageLi.className = `page-item ${i === currentPage ? 'active' : ''}`;
+            pageLi.innerHTML = `<a class="page-link" href="#">${i}</a>`;
+            pageLi.addEventListener('click', function(e) {
+                e.preventDefault();
+                loadNotifications(i);
+            });
+            pagination.appendChild(pageLi);
+        }
+        
+        // زر الصفحة التالية
+        const nextLi = document.createElement('li');
+        nextLi.className = `page-item ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextLi.innerHTML = `<a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>`;
+        nextLi.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (currentPage < totalPages) {
+                loadNotifications(currentPage + 1);
+            }
+        });
+        pagination.appendChild(nextLi);
+    }
+</script>
+{% endblock %}

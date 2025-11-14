@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <!-- Hero Section -->
+        <div class="text-center mb-5">
+            <div class="mb-4" style="background-color: var(--primary-color); padding: 30px; border-radius: 20px; display: inline-block; box-shadow: 0 8px 20px rgba(0,0,0,0.2);">
+                {% if settings and settings.logo_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + settings.logo_path) }}" 
+                         alt="Logo" style="max-height: 150px; max-width: 300px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+                {% else %}
+                    <i class="fas fa-coffee" style="font-size: 5rem; color: white;"></i>
+                {% endif %}
+            </div>
+            <h1 class="display-4 fw-bold mb-3" style="color: var(--primary-color);">
+                مرحباً بك في COFFLOW
+            </h1>
+            <p class="lead text-muted">
+                نظام الولاء الذكي لمقهى COFFLOW - اجمع أكوابك واحصل على مشروبات مجانية!
+            </p>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-gift fa-3x mb-3" style="color: var(--secondary-color);"></i>
+                        <h5 class="card-title fw-bold">مكافآت مجانية</h5>
+                        <p class="card-text text-muted">
+                            كل 6 أكواب قهوة تحصل على كوب مجاني!
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-mobile-alt fa-3x mb-3" style="color: var(--secondary-color);"></i>
+                        <h5 class="card-title fw-bold">سهل الاستخدام</h5>
+                        <p class="card-text text-muted">
+                            واجهة بسيطة وسهلة تعمل على الجوال والمتصفح
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-qrcode fa-3x mb-3" style="color: var(--secondary-color);"></i>
+                        <h5 class="card-title fw-bold">أكواد فريدة</h5>
+                        <p class="card-text text-muted">
+                            احصل على أكواد آمنة وفريدة لمكافآتك
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA Buttons -->
+        <div class="row justify-content-center">
+            <div class="col-md-6 text-center">
+                {% if not current_user.is_authenticated %}
+                    <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg mb-3 w-100">
+                        <i class="fas fa-user-plus"></i> سجل الآن مجاناً
+                    </a>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary btn-lg w-100">
+                        <i class="fas fa-sign-in-alt"></i> لديك حساب؟ سجل دخول
+                    </a>
+                {% else %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        أهلاً {{ current_user.name }}! انتقل إلى لوحة التحكم الخاصة بك
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- How it works -->
+        <div class="card mt-5">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-question-circle"></i> كيف يعمل النظام؟</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="mb-3">
+                            <i class="fas fa-user-plus fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="fw-bold">1. سجل حسابك</h5>
+                        <p class="text-muted small">أنشئ حسابك المجاني في دقائق</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="mb-3">
+                            <i class="fas fa-shopping-bag fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="fw-bold">2. اشتري قهوتك</h5>
+                        <p class="text-muted small">كل عملية شراء = كوب واحد</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="mb-3">
+                            <i class="fas fa-chart-line fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="fw-bold">3. اجمع الأكواب</h5>
+                        <p class="text-muted small">راقب تقدمك حتى تصل للعدد المطلوب</p>
+                    </div>
+                    <div class="col-md-3 text-center mb-3">
+                        <div class="mb-3">
+                            <i class="fas fa-gift fa-3x" style="color: var(--primary-color);"></i>
+                        </div>
+                        <h5 class="fw-bold">4. احصل على مكافأتك</h5>
+                        <p class="text-muted small">استلم كودك واحصل على كوب مجاني!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

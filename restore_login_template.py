@@ -1,0 +1,79 @@
+"""
+استعادة تصميم صفحة تسجيل الدخول القديمة
+"""
+
+def restore_old_login_template():
+    """استعادة تصميم صفحة تسجيل الدخول القديمة"""
+    print("🔧 استعادة تصميم صفحة تسجيل الدخول القديمة...")
+    
+    old_login_template = """{% extends "base.html" %}
+
+{% block title %}تسجيل الدخول - COFFLOW{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">
+                            <i class="fas fa-phone"></i> رقم الجوال
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="phone" name="phone" 
+                               placeholder="05xxxxxxxx" required autofocus>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> كلمة المرور
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                               placeholder="أدخل كلمة المرور" required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="fas fa-sign-in-alt"></i> دخول
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-0">ليس لديك حساب؟</p>
+                    <a href="{{ url_for('register') }}" class="btn btn-outline-secondary mt-2">
+                        <i class="fas fa-user-plus"></i> إنشاء حساب جديد
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}"""
+    
+    try:
+        with open('templates/login.html', 'w', encoding='utf-8') as f:
+            f.write(old_login_template)
+        print("✅ تم استعادة تصميم صفحة تسجيل الدخول القديمة")
+        return True
+    except Exception as e:
+        print(f"❌ خطأ في استعادة تصميم صفحة تسجيل الدخول: {str(e)}")
+        return False
+
+if __name__ == "__main__":
+    restore_old_login_template()

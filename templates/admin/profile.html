@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}حسابي - COFFLOW{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-right"></i> العودة للوحة التحكم
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-cog"></i> تعديل حسابي
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="alert alert-info mb-4">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>تنبيه:</strong> هذا حساب الإدارة - تأكد من حفظ البيانات الجديدة بعناية
+                </div>
+
+                <form method="POST" action="{{ url_for('admin_profile') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i> الاسم الكامل
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                               value="{{ current_user.name }}" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">
+                            <i class="fas fa-phone"></i> رقم الجوال
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="phone" name="phone" 
+                               value="{{ current_user.phone }}" required>
+                        <div class="form-text">يُستخدم لتسجيل الدخول</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> البريد الإلكتروني (اختياري)
+                        </label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                               value="{{ current_user.email or '' }}">
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> كلمة المرور الجديدة
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password">
+                        <div class="form-text">
+                            <strong>اتركه فارغاً إذا كنت لا تريد تغيير كلمة المرور</strong>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-save"></i> حفظ التغييرات
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- معلومات الحساب -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3">
+                    <i class="fas fa-info-circle"></i> معلومات الحساب
+                </h6>
+                <p class="mb-2">
+                    <strong>الدور:</strong> 
+                    <span class="badge bg-danger">مدير النظام</span>
+                </p>
+                <p class="mb-0">
+                    <strong>تاريخ الانضمام:</strong> 
+                    {{ current_user.created_at.strftime('%Y-%m-%d') }}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- خلفية متدرجة -->
+  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#8B4513" />
+    <stop offset="100%" stop-color="#D2691E" />
+  </linearGradient>
+  
+  <!-- الخلفية -->
+  <rect width="512" height="512" rx="80" fill="url(#grad)" />
+  
+  <!-- الدائرة البيضاء -->
+  <circle cx="256" cy="256" r="160" fill="#FFFFFF" />
+  
+  <!-- رمز القهوة -->
+  <g transform="translate(156, 156) scale(0.8)">
+    <path d="M32,128h64v-8c0-26.5,21.5-48,48-48h64c26.5,0,48,21.5,48,48v8h64c35.3,0,64,28.7,64,64v64
+             c0,88.4-71.6,160-160,160H128C57.3,416,0,358.7,0,288l0-96C0,156.7,14.3,140.5,32,128z M320,304
+             c35.3,0,64-28.7,64-64H96c0,35.3,28.7,64,64,64H320z" 
+          fill="#8B4513" />
+  </g>
+</svg>

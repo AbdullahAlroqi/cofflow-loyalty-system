@@ -1,0 +1,39 @@
+<!-- نافذة حوار تفاصيل الإشعار -->
+<div class="modal fade" id="notificationDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تفاصيل الإشعار</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="notification-detail-content">
+                <!-- سيتم ملؤها من JavaScript -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <button type="button" class="btn btn-danger" id="delete-notification-btn">
+                    <i class="fas fa-trash"></i> حذف الإشعار
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- نافذة حوار التأكيد -->
+<div class="modal fade" id="confirmationModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تأكيد</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmation-message">هل أنت متأكد من أنك تريد حذف هذا الإشعار؟</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="confirm-action-btn">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>

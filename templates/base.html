@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="cache-version" content="20251114072119">
+    <title>{% block title %}COFFLOW - نظام الولاء{% endblock %}</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="description" content="نظام إدارة الولاء للمقاهي - إدارة ميدانية سهلة وفعالة">
+    <meta name="theme-color" content="#8B4513">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="COFFLOW">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    
+    <!-- Favicon - شعار المقهى -->
+    {% if settings and settings.logo_path %}
+        <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='uploads/' + settings.logo_path) }}">
+        <link rel="shortcut icon" type="image/x-icon" href="{{ url_for('static', filename='uploads/' + settings.logo_path) }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='uploads/' + settings.logo_path) }}">
+    {% else %}
+        <!-- أيقونة افتراضية -->
+        <link rel="icon" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
+        <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    {% endif %}
+    
+    <!-- PWA Icons for iOS -->
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ url_for('static', filename='icons/icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
+    <link rel="apple-touch-icon" sizes="167x167" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
+    
+    <!-- Android Chrome -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='icons/icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="512x512" href="{{ url_for('static', filename='icons/icon-512x512.png') }}">
+    
+    <!-- Bootstrap RTL CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css?v=20251114072119" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css?v=20251114072119">
+    <!-- Google Fonts - Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Dynamic Colors: Primary={{ settings.primary_color if settings else '#8B4513' }} | Secondary={{ settings.secondary_color if settings else '#D2691E' }} -->
+    <style>
+        :root {
+            --primary-color: {{ settings.primary_color if settings else '#8B4513' }};
+            --secondary-color: {{ settings.secondary_color if settings else '#D2691E' }};
+            --dark-brown: #514f4b;
+            --light-cream: #F5F5DC;
+        }
+        
+        * {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-brown) 100%);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: white !important;
+        }
+        
+        .navbar-brand i {
+            color: var(--secondary-color);
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.9) !important;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .nav-link:hover {
+            color: var(--secondary-color) !important;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-brown) 100%);
+            border: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.4);
+        }
+        
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: white;
+            font-weight: 600;
+            border: none;
+            padding: 1rem 1.5rem;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .coffee-cup {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--secondary-color);
+            border-radius: 5px;
+            position: relative;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+        
+        .coffee-cup:before {
+            content: '☕';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 24px;
+        }
+        
+        .coffee-cup.empty {
+            background: #e0e0e0;
+            opacity: 0.5;
+        }
+        
+        .coffee-cup:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .coupon-code {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            color: var(--primary-color);
+            background: linear-gradient(135deg, #fff8dc 0%, #f5f5dc 100%);
+            padding: 20px;
+            border-radius: 10px;
+            border: 3px dashed var(--secondary-color);
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .stat-card i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 10px 0;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(139, 69, 19, 0.25);
+        }
+        
+        .badge {
+            font-weight: 600;
+            padding: 8px 15px;
+            border-radius: 20px;
+        }
+        
+        .footer {
+            background: linear-gradient(135deg, var(--dark-brown) 0%, var(--primary-color) 100%);
+            color: white;
+            padding: 20px 0;
+            margin-top: 50px;
+        }
+        
+        /* PWA Safe Areas for iOS */
+        @supports (padding: max(0px)) {
+            body {
+                padding-left: max(12px, env(safe-area-inset-left));
+                padding-right: max(12px, env(safe-area-inset-right));
+            }
+            
+            .navbar {
+                padding-top: max(0.5rem, env(safe-area-inset-top));
+            }
+        }
+        
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .coffee-cup {
+                width: 35px;
+                height: 35px;
+                margin: 3px;
+            }
+            
+            .coffee-cup:before {
+                font-size: 20px;
+            }
+            
+            .coupon-code {
+                font-size: 1.5rem;
+                padding: 15px;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+            
+            .stat-card {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .stat-card i {
+                font-size: 2rem;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.8rem;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .navbar-brand {
+                font-size: 1.2rem;
+            }
+            
+            .table {
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* Touch-friendly buttons */
+        @media (hover: none) and (pointer: coarse) {
+            .btn, .nav-link, .coffee-cup {
+                min-height: 44px;
+                min-width: 44px;
+            }
+        }
+        
+        /* Landscape mode optimization */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .stat-card {
+                padding: 10px;
+            }
+            
+            .stat-card i {
+                font-size: 1.5rem;
+                margin-bottom: 5px;
+            }
+            
+            .stat-card h3 {
+                font-size: 1.5rem;
+                margin: 5px 0;
+            }
+        }
+    
+        .notification-container {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            z-index: 999;
+        }
+        
+        .notification-button {
+            border-radius: 25px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .notification-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .notification-container {
+                bottom: 70px;
+                left: 10px;
+                right: 10px;
+                text-align: center;
+            }
+        }
+</style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+{% if current_user.is_authenticated %}<body class="user-authenticated">{% else %}<body>{% endif %}
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% if current_user.is_authenticated %}
+                    {% if current_user.role == 'admin' %}{{ url_for('admin_dashboard') }}
+                    {% elif current_user.role == 'employee' %}{{ url_for('employee_dashboard') }}
+                    {% else %}{{ url_for('customer_dashboard') }}
+                    {% endif %}
+                {% else %}
+                    {{ url_for('index') }}
+                {% endif %}">
+                {% if settings and settings.logo_path %}
+                    <img src="{{ url_for('static', filename='uploads/' + settings.logo_path) }}" 
+                         alt="Logo" style="height: 40px; margin-left: 10px; border-radius: 5px;">
+                {% else %}
+                    <i class="fas fa-coffee"></i>
+                {% endif %}
+                COFFLOW
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_dashboard') }}">
+                                    <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_employees') }}">
+                                    <i class="fas fa-users"></i> الموظفين
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_customers') }}">
+                                    <i class="fas fa-user-friends"></i> العملاء
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_notifications') }}">
+                                    <i class="fas fa-bell"></i> الإشعارات
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('admin_settings') }}">
+                                    <i class="fas fa-cog"></i> الإعدادات
+                                </a>
+                            </li>
+                        {% elif current_user.role == 'employee' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('employee_dashboard') }}">
+                                    <i class="fas fa-tachometer-alt"></i> لوحة التحكم
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('employee_search') }}">
+                                    <i class="fas fa-search"></i> البحث عن عميل
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('employee_verify_coupon') }}">
+                                    <i class="fas fa-ticket-alt"></i> التحقق من كوبون
+                                </a>
+                            </li>
+                        {% elif current_user.role == 'customer' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('customer_dashboard') }}">
+                                    <i class="fas fa-home"></i> الرئيسية
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('customer_history') }}">
+                                    <i class="fas fa-history"></i> سجل المشتريات
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('customer_notifications') }}">
+                                    <i class="fas fa-bell"></i> الإشعارات
+                                </a>
+                            </li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.role == 'admin' %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin_profile') }}">
+                                <i class="fas fa-user-cog"></i> {{ current_user.name }}
+                            </a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <span class="nav-link">
+                                <i class="fas fa-user"></i> {{ current_user.name }}
+                            </span>
+                        </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}">
+                                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}">
+                                <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('register') }}">
+                                <i class="fas fa-user-plus"></i> تسجيل جديد
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    <div class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-info-circle"></i> {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- Main Content -->
+    <main class="container my-5">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer text-center">
+        <div class="container">
+            <p class="mb-0">
+                <i class="fas fa-coffee"></i> 
+                نظام الولاء الخاص بمقهى COFFLOW &copy; 2024
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js?v=20251114072119"></script>
+    
+    <!-- Notifications Script -->
+    <script src="{{ url_for('static', filename='notifications.js') }}"></script>
+    
+    <!-- PWA Script -->
+    <script src="{{ url_for('static', filename='pwa.js') }}"></script>
+    
+    <!-- زر تثبيت التطبيق (مرئي دائمًا) -->
+    <div class="pwa-install-container" id="pwa-install-container" style="display: none;">
+        <button class="btn btn-primary pwa-install-button-visible" id="pwa-install-btn-visible">
+            <i class="fas fa-download"></i> تثبيت التطبيق
+        </button>
+    </div>
+    
+    <!-- زر تفعيل الإشعارات -->
+    <div class="notification-container" id="notification-container" style="display: none;">
+        <button class="btn btn-info notification-button" id="enable-notifications-btn">
+            <i class="fas fa-bell"></i> تفعيل الإشعارات
+        </button>
+    </div>
+
+    <script>
+        // إظهار زر التثبيت المرئي دائمًا للمستخدمين المؤهلين
+        document.addEventListener('DOMContentLoaded', function() {
+            // التحقق من وجود معيار beforeinstallprompt
+            setTimeout(function() {
+                const installContainer = document.getElementById('pwa-install-container');
+                if (installContainer && !isStandalone()) {
+                    installContainer.style.display = 'block';
+                }
+                // إضافة مستمع لزر التثبيت المرئي
+                const installBtn = document.getElementById('pwa-install-btn-visible');
+                if (installBtn) {
+                    installBtn.addEventListener('click', function() {
+                        if (deferredPrompt) {
+                            installPWA();
+                        } else {
+                            // زر احتياطي إذا لم يكن deferredPrompt موجودًا
+                            alert('لتثبيت التطبيق: اضغط على زر القائمة (⋮) في المتصفح ثم اختر "تثبيت التطبيق"');
+                        }
+                    });
+                }
+            }, 1500);
+            // إظهار زر تفعيل الإشعارات
+            setTimeout(function() {
+                if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+                    document.getElementById('notification-container').style.display = 'block';
+                }
+            }, 3000);
+
+        });
+    </script>
+    
+    <style>
+        /* أنماط زر التثبيت المرئي دائمًا */
+        .pwa-install-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        
+        .pwa-install-button-visible {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--dark-brown) 100%);
+            padding: 12px 24px;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            border: none;
+        }
+        
+        .pwa-install-button-visible i {
+            margin-left: 8px;
+        }
+    
+        .notification-container {
+            position: fixed;
+            bottom: 80px;
+            left: 20px;
+            z-index: 999;
+        }
+        
+        .notification-button {
+            border-radius: 25px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .notification-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .notification-container {
+                bottom: 70px;
+                left: 10px;
+                right: 10px;
+                text-align: center;
+            }
+        }
+</style>
+    
+    {% block extra_js %}{% endblock %}
+
+<script>
+    // تحديث عداد الإشعارات غير المقروءة
+    function updateNotificationCounter() {
+        // فقط للمستخدمين المسجلين
+        {% if current_user.is_authenticated and current_user.role == 'customer' %}
+            fetch('/api/notifications/unread-count')
+                .then(response => response.json())
+                .then(data => {
+                    const count = data.count || 0;
+                    const notificationLinks = document.querySelectorAll('.nav-link[href*="notifications"]');
+                    
+                    notificationLinks.forEach(link => {
+                        // إزالة العداد القديم إن وجد
+                        const existingBadge = link.querySelector('.notification-badge');
+                        if (existingBadge) {
+                            existingBadge.remove();
+                        }
+                        
+                        // إضافة العداد الجديد إذا كان هناك إشعارات غير مقروءة
+                        if (count > 0) {
+                            const badge = document.createElement('span');
+                            badge.className = 'badge bg-danger rounded-pill notification-badge';
+                            badge.textContent = count;
+                            badge.style.marginRight = '5px';
+                            badge.style.fontSize = '0.7rem';
+                            link.appendChild(badge);
+                        }
+                    });
+                })
+                .catch(error => {
+                    console.error('خطأ في تحديث عداد الإشعارات:', error);
+                });
+        {% endif %}
+    }
+    
+    // تحديث العداد عند تحميل الصفحة
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNotificationCounter();
+        
+        // تحديث العداد كل دقيقة
+        setInterval(updateNotificationCounter, 60000);
+    });
+</script>
+</body>
+</html>

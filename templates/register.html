@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل جديد - COFFLOW{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow-lg">
+            <div class="card-header text-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-user-plus"></i> إنشاء حساب جديد
+                </h3>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-user"></i> الاسم الكامل
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="name" name="name" 
+                               placeholder="أدخل اسمك الكامل" required autofocus>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">
+                            <i class="fas fa-phone"></i> رقم الجوال
+                        </label>
+                        <input type="text" class="form-control form-control-lg" id="phone" name="phone" 
+                               placeholder="05xxxxxxxx" required>
+                        <div class="form-text">سيستخدم لتسجيل الدخول</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> البريد الإلكتروني (اختياري)
+                        </label>
+                        <input type="email" class="form-control form-control-lg" id="email" name="email" 
+                               placeholder="example@email.com">
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> كلمة المرور
+                        </label>
+                        <input type="password" class="form-control form-control-lg" id="password" name="password" 
+                               placeholder="اختر كلمة مرور قوية" required>
+                        <div class="form-text">يجب أن تكون 6 أحرف على الأقل</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="fas fa-user-plus"></i> إنشاء الحساب
+                    </button>
+                </form>
+                
+                <hr>
+                
+                <div class="text-center">
+                    <p class="mb-0">لديك حساب بالفعل؟</p>
+                    <a href="{{ url_for('login') }}" class="btn btn-outline-secondary mt-2">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

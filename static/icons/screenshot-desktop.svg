@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720">
+  <!-- خلفية -->
+  <rect width="1280" height="720" fill="#f5f5f5" />
+  
+  <!-- محاكاة الشاشة -->
+  <rect x="40" y="20" width="1200" height="680" rx="5" ry="5" fill="#ffffff" stroke="#dddddd" stroke-width="2" />
+  
+  <!-- شريط العنوان -->
+  <rect x="40" y="20" width="1200" height="70" fill="#8B4513" />
+  <text x="140" y="65" font-family="Arial, sans-serif" font-size="24" fill="#ffffff">COFFLOW</text>
+  
+  <circle cx="1180" cy="55" r="20" fill="#ffffff" fill-opacity="0.2" />
+  <text x="1180" y="62" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" text-anchor="middle">م</text>
+  
+  <text x="950" y="65" font-family="Arial, sans-serif" font-size="18" fill="#ffffff">لوحة التحكم</text>
+  <text x="850" y="65" font-family="Arial, sans-serif" font-size="18" fill="#ffffff">الموظفين</text>
+  <text x="750" y="65" font-family="Arial, sans-serif" font-size="18" fill="#ffffff">العملاء</text>
+  <text x="650" y="65" font-family="Arial, sans-serif" font-size="18" fill="#ffffff">الإعدادات</text>
+  
+  <!-- عنوان الصفحة -->
+  <text x="1160" y="130" font-family="Arial, sans-serif" font-size="28" fill="#333333" text-anchor="end">لوحة التحكم</text>
+  
+  <!-- إحصائيات -->
+  <rect x="60" y="160" width="280" height="140" rx="10" ry="10" fill="#ffffff" stroke="#eeeeee" stroke-width="1" />
+  <text x="80" y="190" font-family="Arial, sans-serif" font-size="18" fill="#333333">إجمالي العملاء</text>
+  <text x="80" y="250" font-family="Arial, sans-serif" font-size="46" fill="#8B4513">486</text>
+  <circle cx="300" cy="230" r="40" fill="#f0f0f0" />
+  <text x="300" y="245" font-family="Arial, sans-serif" font-size="32" fill="#8B4513" text-anchor="middle">👤</text>
+  
+  <rect x="360" y="160" width="280" height="140" rx="10" ry="10" fill="#ffffff" stroke="#eeeeee" stroke-width="1" />
+  <text x="380" y="190" font-family="Arial, sans-serif" font-size="18" fill="#333333">العمليات اليوم</text>
+  <text x="380" y="250" font-family="Arial, sans-serif" font-size="46" fill="#D2691E">72</text>
+  <circle cx="600" cy="230" r="40" fill="#f0f0f0" />
+  <text x="600" y="245" font-family="Arial, sans-serif" font-size="32" fill="#D2691E" text-anchor="middle">🛒</text>
+  
+  <rect x="660" y="160" width="280" height="140" rx="10" ry="10" fill="#ffffff" stroke="#eeeeee" stroke-width="1" />
+  <text x="680" y="190" font-family="Arial, sans-serif" font-size="18" fill="#333333">المبيعات الشهرية</text>
+  <text x="680" y="250" font-family="Arial, sans-serif" font-size="46" fill="#4682B4">4,258</text>
+  <circle cx="900" cy="230" r="40" fill="#f0f0f0" />
+  <text x="900" y="245" font-family="Arial, sans-serif" font-size="32" fill="#4682B4" text-anchor="middle">📈</text>
+  
+  <rect x="960" y="160" width="280" height="140" rx="10" ry="10" fill="#ffffff" stroke="#eeeeee" stroke-width="1" />
+  <text x="980" y="190" font-family="Arial, sans-serif" font-size="18" fill="#333333">عملاء جدد هذا الشهر</text>
+  <text x="980" y="250" font-family="Arial, sans-serif" font-size="46" fill="#2E8B57">37</text>
+  <circle cx="1200" cy="230" r="40" fill="#f0f0f0" />
+  <text x="1200" y="245" font-family="Arial, sans-serif" font-size="32" fill="#2E8B57" text-anchor="middle">✨</text>
+  
+  <!-- جدول العمليات -->
+  <rect x="60" y="330" width="580" height="340" rx="10" ry="10" fill="#ffffff" stroke="#eeeeee" stroke-width="1" />
+  <text x="80" y="370" font-family="Arial, sans-serif" font-size="20" fill="#333333">آخر العمليات</text>
+  
+  <!-- رأس الجدول -->
+  <rect x="80" y="390" width="540" height="40" fill="#f9f9f9" />
+  <text x="100" y="415" font-family="Arial, sans-serif" font-size="16" fill="#666666">رقم العملية</text>
+  <text x="250" y="415" font-family="Arial, sans-serif" font-size="16" fill="#666666">العميل</text>
+  <text x="400" y="415" font-family="Arial, sans-serif" font-size="16" fill="#666666">المبلغ</text>
+  <text x="550" y="415" font-family="Arial, sans-serif" font-size="16" fill="#666666">التاريخ</text>
+  
+  <!-- صفوف الجدول -->
+  <rect x="80" y="430" width="540" height="40" fill="#ffffff" />
+  <text x="100" y="455" font-family="Arial, sans-serif" font-size="14" fill="#333333">#47293</text>
+  <text x="250" y="455" font-family="Arial, sans-serif" font-size="14" fill="#333333">أحمد خالد</text>
+  <text x="400" y="455" font-family="Arial, sans-serif" font-size="14" fill="#333333">65.00 ريال</text>
+  <text x="550" y="455" font-family="Arial, sans-serif" font-size="14" fill="#333333">اليوم</text>
+  
+  <rect x="80" y="470" width="540" height="40" fill="#f9f9f9" />
+  <text x="100" y="495" font-family="Arial, sans-serif" font-size="14" fill="#333333">#47292</text>
+  <text x="250" y="495" font-family="Arial, sans-serif" font-size="14" fill="#333333">سارة محمد</text>
+  <text x="400" y="495" font-family="Arial, sans-serif" font-size="14" fill="#333333">42.00 ريال</text>
+  <text x="550" y="495" font-family="Arial, sans-serif" font-size="14" fill="#333333">اليوم</text>
+  
+  <rect x="80" y="510" width="540" height="40" fill="#ffffff" />
+  <text x="100" y="535" font-family="Arial, sans-serif" font-size="14" fill="#333333">#47291</text>
+  <text x="250" y="535" font-family="Arial, sans-serif" font-size="14" fill="#333333">محمد عبدالله</text>
+  <text x="400" y="535" font-family="Arial, sans-serif" font-size="14" fill="#333333">78.50 ريال</text>
+  <text x="550" y="535" font-family="Arial, sans-serif" font-size="14" fill="#333333">اليوم</text>
+  
+  <rect x="80" y="550" width="540" height="40" fill="#f9f9f9" />
+  <text x="100" y="575" font-family="Arial, sans-serif" font-size="14" fill="#333333">#47290</text>
+  <text x="250" y="575" font-family="Arial, sans-serif" font-size="14" fill="#333333">نورة أحمد</text>
+  <text x="400" y="575" font-family="Arial, sans-serif" font-size="14" fill="#333333">120.00 ريال</text>
+  <text x="550" y="575" font-family="Arial, sans-serif" font-size="14" fill="#333333">الأمس</text>
+  
+  <rect x="80" y="590" width="540" height="40" fill="#ffffff" />
+  <text x="100" y="615" font-family="Arial, sans-serif" font-size="14" fill="#333333">#47289</text>
+  <text x="250" y="615" font-family="Arial, sans-serif" font-size="14" fill="#333333">فهد سعد</text>
+  <text x="400" y="615" font-family="Arial, sans-serif" font-size="14" fill="#333333">55.00 ريال</text>
+  <text x="550" y="615" font-family="Arial, sans-serif" font-size="14" fill="#333333">الأمس</text>
+  
+  <!-- كوبونات -->
+  <rect x="660" y="330" width="580" height="340" rx="10" ry="10" fill="#ffffff" stroke="#eeeeee" stroke-width="1" />
+  <text x="680" y="370" font-family="Arial, sans-serif" font-size="20" fill="#333333">الكوبونات النشطة</text>
+  
+  <!-- بطاقة كوبون -->
+  <rect x="680" y="390" width="540" height="80" rx="5" ry="5" fill="#f9f9f9" />
+  <text x="700" y="420" font-family="Arial, sans-serif" font-size="18" fill="#333333">كوبون الصباح</text>
+  <text x="700" y="450" font-family="Arial, sans-serif" font-size="14" fill="#666666">خصم 15% على جميع المشروبات الساخنة</text>
+  <rect x="1170" y="410" width="30" height="30" rx="15" ry="15" fill="#8B4513" />
+  <text x="1185" y="428" font-family="Arial, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle">✓</text>
+  
+  <!-- بطاقة كوبون -->
+  <rect x="680" y="480" width="540" height="80" rx="5" ry="5" fill="#f9f9f9" />
+  <text x="700" y="510" font-family="Arial, sans-serif" font-size="18" fill="#333333">خصم العيد</text>
+  <text x="700" y="540" font-family="Arial, sans-serif" font-size="14" fill="#666666">خصم 25% على الفطور الكامل</text>
+  <rect x="1170" y="500" width="30" height="30" rx="15" ry="15" fill="#8B4513" />
+  <text x="1185" y="518" font-family="Arial, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle">✓</text>
+  
+  <!-- بطاقة كوبون -->
+  <rect x="680" y="570" width="540" height="80" rx="5" ry="5" fill="#f9f9f9" />
+  <text x="700" y="600" font-family="Arial, sans-serif" font-size="18" fill="#333333">قهوة مجانية</text>
+  <text x="700" y="630" font-family="Arial, sans-serif" font-size="14" fill="#666666">قهوة مجانية بعد 10 زيارات</text>
+  <rect x="1170" y="590" width="30" height="30" rx="15" ry="15" fill="#8B4513" />
+  <text x="1185" y="608" font-family="Arial, sans-serif" font-size="20" fill="#ffffff" text-anchor="middle">✓</text>
+</svg>

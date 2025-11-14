@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة الكوبونات - COFFLOW{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="fas fa-ticket-alt"></i> إدارة الكوبونات</h2>
+        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-right"></i> العودة للوحة التحكم
+        </a>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>{{ active_coupons|length }}</h3>
+                <p>الكوبونات النشطة</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>{{ used_coupons|length }}</h3>
+                <p>الكوبونات المستخدمة</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <i class="fas fa-calendar"></i>
+                <h3>{{ coupons|length }}</h3>
+                <p>إجمالي الكوبونات</p>
+            </div>
+        </div>
+    </div>
+    
+    <ul class="nav nav-tabs mb-4" id="couponsTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="active-tab" data-bs-toggle="tab" href="#active" role="tab">
+                <i class="fas fa-check-circle text-success"></i> الكوبونات النشطة
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="used-tab" data-bs-toggle="tab" href="#used" role="tab">
+                <i class="fas fa-times-circle text-secondary"></i> الكوبونات المستخدمة
+            </a>
+        </li>
+    </ul>
+    
+    <div class="tab-content" id="couponsTabContent">
+        <!-- الكوبونات النشطة -->
+        <div class="tab-pane fade show active" id="active" role="tabpanel">
+            {% if active_coupons %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>رمز الكوبون</th>
+                            <th>العميل</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>العمليات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for coupon, user in coupons if coupon.status == 'active' %}
+                        <tr>
+                            <td>
+                                <span class="badge bg-success">{{ coupon.code }}</span>
+                            </td>
+                            <td>{{ user.name }}</td>
+                            <td>{% if coupon.created_at %}{{ coupon.created_at.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-times"></i> إلغاء
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center text-muted my-5">
+                <i class="fas fa-ticket-alt fa-4x mb-3"></i>
+                <h5>لا توجد كوبونات نشطة</h5>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- الكوبونات المستخدمة -->
+        <div class="tab-pane fade" id="used" role="tabpanel">
+            {% if used_coupons %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>رمز الكوبون</th>
+                            <th>العميل</th>
+                            <th>تاريخ الإنشاء</th>
+                            <th>تاريخ الاستخدام</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for coupon, user in coupons if coupon.status == 'used' %}
+                        <tr>
+                            <td>
+                                <span class="badge bg-secondary">{{ coupon.code }}</span>
+                            </td>
+                            <td>{{ user.name }}</td>
+                            <td>{% if coupon.created_at %}{{ coupon.created_at.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                            <td>{% if coupon.used_at %}{{ coupon.used_at.strftime('%d/%m/%Y') }}{% else %}-{% endif %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center text-muted my-5">
+                <i class="fas fa-check-circle fa-4x mb-3"></i>
+                <h5>لا توجد كوبونات مستخدمة</h5>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

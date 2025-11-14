@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}{{ customer.name }} - COFFLOW{% endblock %}
+
+{% block content %}
+<!-- أزرار تغيير اللغة -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{{ url_for('employee_search') }}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-right"></i> {{ t.back_to_search }}
+    </a>
+    <div class="btn-group" role="group">
+        <a href="{{ url_for('change_language', lang='ar') }}" class="btn btn-sm {% if lang == 'ar' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇸🇦 عربي
+        </a>
+        <a href="{{ url_for('change_language', lang='en') }}" class="btn btn-sm {% if lang == 'en' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇬🇧 English
+        </a>
+        <a href="{{ url_for('change_language', lang='bn') }}" class="btn btn-sm {% if lang == 'bn' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+            🇧🇩 বাংলা
+        </a>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- معلومات العميل -->
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body p-4">
+                <i class="fas fa-user-circle fa-5x mb-3" style="color: var(--primary-color);"></i>
+                <h4 class="mb-2">{{ customer.name }}</h4>
+                <p class="text-muted mb-1">
+                    <i class="fas fa-phone"></i> {{ customer.phone }}
+                </p>
+                {% if customer.email %}
+                <p class="text-muted">
+                    <i class="fas fa-envelope"></i> {{ customer.email }}
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- عدد الأكواب -->
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-coffee"></i> {{ t.cups_progress }}
+                </h5>
+            </div>
+            <div class="card-body text-center p-4">
+                <h2 class="mb-3" style="color: var(--primary-color);">
+                    {{ customer.cups_count }} / {{ cups_required }}
+                </h2>
+                
+                <!-- عرض الأكواب بشكل مرئي -->
+                <div class="mb-4">
+                    {% for i in range(cups_required) %}
+                        <div class="coffee-cup {% if i >= customer.cups_count %}empty{% endif %}"></div>
+                    {% endfor %}
+                </div>
+
+                <form method="POST" action="{{ url_for('employee_add_cup', id=customer.id) }}">
+                    <button type="submit" class="btn btn-primary btn-lg" 
+                            onclick="return confirm('{{ t.add_cup_confirm }}')">
+                        <i class="fas fa-plus-circle"></i> {{ t.add_cup }}
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- الأكواد النشطة -->
+        {% if active_coupons %}
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">
+                    <i class="fas fa-gift"></i> {{ t.active_coupons }} ({{ active_coupons|length }})
+                </h5>
+            </div>
+            <div class="card-body">
+                {% for coupon in active_coupons %}
+                <div class="mb-4 p-3" style="background-color: #f8f9fa; border-radius: 10px; border: 2px solid #28a745;">
+                    <div class="coupon-code mb-3">
+                        {{ coupon.code }}
+                    </div>
+                    <p class="text-muted small text-center mb-3">
+                        <i class="fas fa-calendar"></i> {{ t.created_at }}: {{ coupon.created_at.strftime('%Y-%m-%d %H:%M') }}
+                    </p>
+                    
+                    <!-- زر صرف الكود -->
+                    <form method="POST" action="{{ url_for('employee_redeem_coupon', customer_id=customer.id, coupon_id=coupon.id) }}" class="text-center">
+                        <button type="submit" class="btn btn-success btn-lg w-100" 
+                                onclick="return confirm('{{ t.redeem_confirm }}\n\n{{ t.code }}: {{ coupon.code }}')">
+                            <i class="fas fa-check-circle"></i> {{ t.redeem_free_cup }}
+                        </button>
+                    </form>
+                </div>
+                {% if not loop.last %}<hr>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

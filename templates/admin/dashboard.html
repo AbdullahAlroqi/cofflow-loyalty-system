@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة تحكم الإدارة - COFFLOW{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dashboard-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 30px 0;
+        margin-bottom: 30px;
+        border-radius: 0 0 20px 20px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        border: 1px solid rgba(139, 69, 19, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    .stat-card i {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 15px;
+        display: block;
+    }
+    
+    .stat-card h3 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark-brown);
+        margin-bottom: 10px;
+    }
+    
+    .stat-card p {
+        color: #6c757d;
+        font-weight: 600;
+        margin: 0;
+    }
+    
+    .dashboard-card {
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid rgba(139, 69, 19, 0.1);
+        margin-bottom: 30px;
+    }
+    
+    .dashboard-card .card-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border-radius: 15px 15px 0 0;
+        padding: 20px 25px;
+        border: none;
+    }
+    
+    .dashboard-card .card-body {
+        padding: 25px;
+    }
+    
+    .quick-action-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border: none;
+        border-radius: 10px;
+        color: white;
+        padding: 12px 20px;
+        margin: 5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    
+    .quick-action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 15px rgba(139, 69, 19, 0.3);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2">
+                    <i class="fas fa-tachometer-alt"></i> لوحة تحكم الإدارة
+                </h1>
+                <p class="mb-0">مرحباً {{ current_user.name }}، إليك ملخص اليوم</p>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="d-flex justify-content-end gap-2">
+                    <a href="{{ url_for('admin_notifications') }}" class="btn btn-light">
+                        <i class="fas fa-bell"></i> الإشعارات
+                    </a>
+                    <a href="{{ url_for('admin_settings') }}" class="btn btn-outline-light">
+                        <i class="fas fa-cog"></i> الإعدادات
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <!-- إحصائيات سريعة -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-users"></i>
+                <h3>{{ total_customers }}</h3>
+                <p>إجمالي العملاء</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-user-tie"></i>
+                <h3>{{ total_employees }}</h3>
+                <p>إجمالي الموظفين</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-ticket-alt"></i>
+                <h3>{{ active_coupons }}</h3>
+                <p>الأكواد النشطة</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <i class="fas fa-check-circle"></i>
+                <h3>{{ used_coupons }}</h3>
+                <p>الأكواد المستخدمة</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- إجراءات سريعة -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-bolt"></i> إجراءات سريعة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{{ url_for('admin_customers') }}" class="quick-action-btn">
+                            <i class="fas fa-users"></i> إدارة العملاء
+                        </a>
+                        <a href="{{ url_for('admin_employees') }}" class="quick-action-btn">
+                            <i class="fas fa-user-tie"></i> إدارة الموظفين
+                        </a>
+                        <a href="{{ url_for('admin_coupons') }}" class="quick-action-btn">
+                            <i class="fas fa-ticket-alt"></i> إدارة الكوبونات
+                        </a>
+                        <a href="{{ url_for('admin_notifications') }}" class="quick-action-btn">
+                            <i class="fas fa-bell"></i> إدارة الإشعارات
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="dashboard-card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history"></i> المعاملات الأخيرة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_transactions %}
+                        <div class="list-group list-group-flush">
+                            {% for transaction in recent_transactions[:5] %}
+                            <div class="list-group-item border-0 px-0">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ transaction.customer.name }}</h6>
+                                        <small class="text-muted">{{ transaction.transaction_type }}</small>
+                                    </div>
+                                    <small class="text-muted">{{ transaction.created_at.strftime('%d/%m %H:%M') }}</small>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('admin_transactions') }}" class="btn btn-outline-primary">
+                                عرض جميع المعاملات
+                            </a>
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">
+                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                            <p>لا توجد معاملات حتى الآن</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
