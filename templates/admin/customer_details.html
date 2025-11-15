@@ -24,7 +24,9 @@
                 <p><strong>رقم الجوال:</strong> {{ customer.phone }}</p>
                 <p><strong>البريد:</strong> {{ customer.email or '-' }}</p>
                 <p><strong>تاريخ التسجيل:</strong><br>
-                    <small class="text-muted">{{ customer.created_at.strftime('%Y-%m-%d %H:%M')  if {{ customer.created_at else "-"  if customer.created_at else "-" }}}}</small>
+                    <small class="text-muted">
+                        {{ customer.created_at.strftime('%Y-%m-%d %H:%M') if customer.created_at else '-' }}
+                    </small>
                 </p>
                 <hr>
                 <form method="POST" action="{{ url_for('admin_edit_customer', id=customer.id) }}">
@@ -112,7 +114,7 @@
                             {% for transaction in transactions %}
                             <tr>
                                 <td class="small text-muted">
-                                    {{ transaction.created_at.strftime('%Y-%m-%d %H:%M')  if {{ transaction.created_at else "-"  if transaction.created_at else "-" }}}}
+                                    {{ transaction.created_at.strftime('%Y-%m-%d %H:%M') if transaction.created_at else '-' }}
                                 </td>
                                 <td>
                                     {% if transaction.transaction_type == 'add_cup' %}

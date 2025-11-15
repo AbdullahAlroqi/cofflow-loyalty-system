@@ -11,6 +11,7 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_login import login_required, current_user
 from models import db, Notification, User
 from notifications_enhanced import EnhancedNotificationManager
+from notifications import NotificationManager
 from werkzeug.utils import secure_filename
 import os
 import json
@@ -89,16 +90,17 @@ def get_notifications():
 def create_notification():
     """إنشاء إشعار جديد"""
     try:
+        # قراءة البيانات من النموذج
         title = request.form.get('title')
         body = request.form.get('body')
-        type = request.form.get('type')
+        notification_type = request.form.get('type')
         icon = request.form.get('icon', 'bell')
         is_public = request.form.get('is_public', 'true') == 'true'
-        
-        # التحقق من البيانات الإلزامية
-        if not all([title, body, type]):
+
+        # التحقق من الحقول الإلزامية
+        if not all([title, body, notification_type]):
             return jsonify({'success': False, 'message': 'جميع الحقول المطلوبة غير مكتملة'}), 400
-        
+
         # معالجة الصورة إذا تم تحميلها
         image_url = None
         if 'image' in request.files:
@@ -107,55 +109,66 @@ def create_notification():
                 filename = secure_filename(image.filename)
                 timestamp = int(datetime.now().timestamp())
                 filename = f"notification_{timestamp}_{filename}"
-                
+
                 # إنشاء مجلد إذا لم يكن موجوداً
                 upload_folder = os.path.join(current_app.static_folder, 'uploads', 'notifications')
                 os.makedirs(upload_folder, exist_ok=True)
-                
+
                 # حفظ الصورة
                 image_path = os.path.join(upload_folder, filename)
                 image.save(image_path)
-                
-                # تعيين رابط الصورة
+
+                # تعيين رابط الصورة للاستعمال في الواجهة
                 image_url = f"/static/uploads/notifications/{filename}"
-        
-        # معالجة رابط العمل
-        action_url = request.form.get('action_url')
-        
-        # معالجة المستلمين
-        recipients = []
+
+        # رابط الإجراء (اختياري)
+        action_url = request.form.get('action_url') or None
+
+        # المستلمون
+        recipients = None
         if not is_public:
             recipients_json = request.form.get('recipients')
             if recipients_json:
-                recipient_ids = json.loads(recipients_json)
+                try:
+                    recipients = [int(r) for r in json.loads(recipients_json)]
+                except Exception:
+                    return jsonify({'success': False, 'message': 'تنسيق قائمة العملاء غير صحيح'}), 400
+
+        # وقت الجدولة (اختياري)
         scheduled_at = None
-        expires_at = None
-        
-        if data.get('scheduled_at'):
+        scheduled_raw = request.form.get('scheduled_at')
+        if scheduled_raw:
             try:
-                scheduled_at = datetime.fromisoformat(data['scheduled_at'].replace('Z', '+00:00'))
+                # قيمة datetime-local تأتي بدون منطقة زمنية، ويتم تفسيرها كما هي على الخادم
+                scheduled_at = datetime.fromisoformat(scheduled_raw)
             except ValueError:
                 return jsonify({'success': False, 'message': 'تنسيق تاريخ الجدولة غير صحيح'}), 400
-        
-        if data.get('expires_at'):
+
+        # تاريخ انتهاء الصلاحية (اختياري)
+        expires_at = None
+        expires_raw = request.form.get('expire_at')
+        if expires_raw:
             try:
-                expires_at = datetime.fromisoformat(data['expires_at'].replace('Z', '+00:00'))
+                expires_at = datetime.fromisoformat(expires_raw)
             except ValueError:
                 return jsonify({'success': False, 'message': 'تنسيق تاريخ الانتهاء غير صحيح'}), 400
-        
-        # إنشاء الإشعار
+
+        # إذا كان الإشعار غير مجدول، أرسله فوراً
+        send_immediately = scheduled_at is None
+
+        # إنشاء الإشعار عبر المدير المحسن
         notification = EnhancedNotificationManager.create_notification(
-            title=data['title'],
-            body=data['body'],
-            notification_type=data.get('type', 'general'),
+            title=title,
+            body=body,
+            notification_type=notification_type or 'general',
             creator_id=current_user.id,
-            recipients=data.get('recipients'),
-            image_url=data.get('image_url'),
-            action_url=data.get('action_url'),
+            recipients=recipients,
+            image_url=image_url,
+            action_url=action_url,
             scheduled_at=scheduled_at,
             expires_at=expires_at,
-            icon=data.get('icon', 'bell'),
-            send_immediately=data.get('send_immediately', True)
+            icon=icon,
+            send_immediately=send_immediately
         )
         
         if notification:
@@ -311,26 +324,31 @@ def get_user_notifications():
     try:
         page = int(request.args.get('page', 1))
         filter_type = request.args.get('filter', 'all')
-        unread_only = request.args.get('unread', 'false').lower() == 'true'
-        
-        # الحصول على الإشعارات باستخدام مدير الإشعارات
-        notifications = NotificationManager.get_user_notifications(
+        unread_param = request.args.get('unread', 'false').lower() == 'true'
+
+        # إذا كان الفلتر "unread"، اعتبره unread_only أيضاً
+        unread_only = unread_param or (filter_type == 'unread')
+
+        per_page = 10
+
+        # جلب الإشعارات باستخدام المدير المحسن (يعيد قائمة قواميس)
+        # نستخدم limit أكبر قليلاً لتغطية الصفحات الأولى
+        max_items = per_page * page
+        notifications = EnhancedNotificationManager.get_user_notifications(
             user_id=current_user.id,
             unread_only=unread_only,
-            page=page
+            limit=max_items
         )
-        
-        # تطبيق الفلتر إذا كان محدداً
-        if filter_type != 'all':
+
+        # تطبيق الفلتر حسب النوع إذا لزم الأمر
+        if filter_type not in ['all', 'unread']:
             notifications = [n for n in notifications if n.get('type') == filter_type]
-            
-        # تقسيم الإشعارات إلى صفحات (إذا لزم الأمر)
+
         total_items = len(notifications)
-        per_page = 10
-        total_pages = (total_items + per_page - 1) // per_page
-        start_idx = (page - 1) * per_page
+        total_pages = (total_items + per_page - 1) // per_page or 1
+        start_idx = max(0, (page - 1) * per_page)
         end_idx = min(start_idx + per_page, total_items)
-        
+
         return jsonify({
             'notifications': notifications[start_idx:end_idx],
             'total': total_items,
@@ -356,8 +374,8 @@ def mark_notification_read():
         if not notification_id:
             return jsonify({'success': False, 'message': 'معرف الإشعار مطلوب'}), 400
             
-        # تعليم الإشعار كمقروء
-        if NotificationManager.mark_notification_read(current_user.id, notification_id):
+        # تعليم الإشعار كمقروء باستخدام المدير المحسن
+        if EnhancedNotificationManager.mark_as_read(current_user.id, notification_id):
             return jsonify({'success': True, 'message': 'تم تعليم الإشعار كمقروء'})
         else:
             return jsonify({'success': False, 'message': 'فشل تعليم الإشعار كمقروء'}), 400
@@ -371,7 +389,7 @@ def mark_notification_read():
 def get_unread_count():
     """الحصول على عدد الإشعارات غير المقروءة"""
     try:
-        count = NotificationManager.get_unread_count(current_user.id)
+        count = EnhancedNotificationManager.get_unread_count(current_user.id)
         return jsonify({'count': count})
     except Exception as e:
         current_app.logger.error(f"خطأ في الحصول على عدد الإشعارات غير المقروءة: {str(e)}")
@@ -388,8 +406,8 @@ def subscribe_to_notifications():
         if not subscription:
             return jsonify({'success': False, 'message': 'بيانات الاشتراك مطلوبة'}), 400
             
-        # حفظ اشتراك الإشعارات
-        if NotificationManager.save_subscription(current_user.id, subscription):
+        # حفظ اشتراك الإشعارات باستخدام المدير المحسن
+        if EnhancedNotificationManager.save_user_subscription(current_user.id, subscription):
             return jsonify({'success': True, 'message': 'تم الاشتراك في الإشعارات بنجاح'})
         else:
             return jsonify({'success': False, 'message': 'فشل الاشتراك في الإشعارات'}), 400

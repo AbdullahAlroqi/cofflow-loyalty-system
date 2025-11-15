@@ -96,16 +96,18 @@ def make_session_permanent():
 
 @app.route('/')
 def index():
-    """الصفحة الرئيسية"""
+    """الصفحة الأساسية: توجيه لتسجيل الدخول أو لوحة التحكم"""
+    # إذا كان المستخدم مسجلاً للدخول، توجه مباشرة للوحة التحكم المناسبة
     if current_user.is_authenticated:
-        # توجيه المستخدم للوحة التحكم المناسبة
         if current_user.role == 'admin':
             return redirect(url_for('admin_dashboard'))
         elif current_user.role == 'employee':
             return redirect(url_for('employee_dashboard'))
         else:
             return redirect(url_for('customer_dashboard'))
-    return render_template('index.html')
+
+    # إذا لم يكن مسجلاً، توجه لصفحة تسجيل الدخول
+    return redirect(url_for('login'))
 
 # ==================== PWA Routes ====================
 

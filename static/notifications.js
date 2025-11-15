@@ -64,7 +64,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ subscription: JSON.stringify(subscription) })
+                    // نرسل كائن الاشتراك كـ JSON عادي (بدون ترميز مزدوج)
+                    body: JSON.stringify({ subscription: subscription.toJSON() })
                 });
                 
                 console.log('✅ تم تسجيل اشتراك الإشعارات بنجاح');

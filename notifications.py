@@ -6,6 +6,7 @@ import json
 import base64
 from py_vapid import Vapid
 from datetime import datetime, timedelta
+from urllib.parse import urlparse
 from models import db, Notification, User, Settings, user_notifications
 import logging
 import os

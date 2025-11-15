@@ -160,6 +160,9 @@ class Notification(db.Model):
             'type': self.type,
             'image_url': self.image_url,
             'action_url': self.action_url,
+            # مفاتيح مختصرة متوافقة مع الواجهة الأمامية
+            'image': self.image_url,
+            'action': self.action_url,
             'is_public': self.is_public,
             'creator_id': self.creator_id,
             'created_at': self.created_at.isoformat() if self.created_at else None,
